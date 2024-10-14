@@ -77,6 +77,7 @@
         </div>
     </div>
 
+    <div class="sample_json"></div>
     
 
     <!-- Firebase Auth and Realtime Database Javascript Config [START] -->
@@ -260,8 +261,12 @@
 
                     retrieveArray.forEach(function(value,ndx){
 
-                        alert(value);
-                      
+                    let id = Object.keys(value);
+                    let data = JSON.stringify(value);
+                    
+                    alert(data[""+id+""].username);
+                    
+
                     });
 
                  
