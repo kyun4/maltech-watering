@@ -251,7 +251,7 @@
             function fetchData(){
                 return new Promise((resolve) => {
                     const myArray = [];
-                    db.ref('/users_admin').once('value').then((snapshot)=>{
+                    db.ref('/users').once('value').then((snapshot)=>{
                         myArray.push(snapshot.val());
                         resolve(myArray);
                     });
@@ -301,7 +301,7 @@
 
                             
                     //const userId = db.ref("/users_admin").push().getKey();
-                    const userRef = db.ref("/users_admin/"+firebase_uid);
+                    const userRef = db.ref("/users/"+firebase_uid);
 
                     userRef.set({
                         username: username,

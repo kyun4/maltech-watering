@@ -1008,40 +1008,9 @@
           }
 
 
-          function add_admin(username,email,password){
+      
 
-              const userId = db.ref("/users_admin").push().getKey();
-              const userRef = db.ref("/users_admin/"+userId);
-
-              userRef.set({
-                  username: username,
-                  user_id:userId,
-                  firstname:"",
-                  lastname:"",
-                  middlename:"",
-                  extname:"",
-                  mobile_no:"",
-                  address:"",
-                  email_address:email,
-                  date_time_registered:""
-              });
-
-              alert('Successfully Registered as Administrator!');
-              window.location.href = '';
-          }
-
-          // var btn_signup = document.getElementById('btn_signup');
-         
-
-          // btn_signup.addEventListener('click',(e)=>{
-
-          //     var username = document.getElementById('username_register').value;
-          //     var email = document.getElementById('email_register').value;
-          //     var password = document.getElementById('password_register').value;
-
-          //     add_admin(username,email,password);
-
-          // });
+        
 
  
 </script>
