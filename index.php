@@ -27,8 +27,10 @@
     <div class="container">
         <!-- Login Form -->
         <div id="login-form" class="form-container active">
-            <h1>Automatic Watering System</h1>
-            <h2>Login</h2>
+            <img src = "assets/img/automated_watering_system_01_logo.png" height = "100"/>
+            <h1>MALtech<br/><small>Automated Watering System</small></h1>
+            
+            <small>Admin Login</small>
             <h5 class = "login_note mt-3"></h5>
           
                 <div class="input-box">
@@ -298,7 +300,7 @@
                     }else{
 
                             
-                    const userId = db.ref("/users_admin").push().getKey();
+                    //const userId = db.ref("/users_admin").push().getKey();
                     const userRef = db.ref("/users_admin/"+firebase_uid);
 
                     userRef.set({
@@ -310,6 +312,7 @@
                         extname:"",
                         mobile_no:"",
                         address:"",
+                        role: "admin",
                         email_address:email,
                         date_time_registered:""
                     });

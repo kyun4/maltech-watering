@@ -969,7 +969,7 @@
           
           function get_users(){
 
-            db.ref("users_admin").once('value').then(function(snapshot){
+            db.ref("users").once('value').then(function(snapshot){
 
               var firebaseUID = snapshot.key;
 
