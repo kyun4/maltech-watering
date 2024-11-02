@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<?php include('variables.php'); ?>
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -219,9 +221,9 @@
               </li> <!-- Notification Dropdown Contents for Notification Navbar Item -->
   
               <li class="nav-item pe-2 d-flex align-items-center">
-                <a href = "" id = "signout" class="nav-link text-body p-0" aria-expanded="false">
+                <a href = "" data-toggle = "modal" data-target = "#logout-modal" class="nav-link text-body p-0" aria-expanded="false">
                   Logout
-                </a>            
+                </a>             
               </li> <!-- Logout Navbar Item -->
              
             </li>
@@ -229,6 +231,9 @@
         </div>
       </div>
     </nav>
+
+    <?php include('modals.php'); ?>
+
     <!-- End Navbar -->
     <div class="container-fluid py-4">
      

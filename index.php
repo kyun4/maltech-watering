@@ -30,7 +30,7 @@
             <h1>Automatic Watering System</h1>
             <h2>Login</h2>
             <h5 class = "login_note mt-3"></h5>
-            <form onsubmit="login(event)">
+          
                 <div class="input-box">
                     <input type="text" id="email_signin" placeholder="Email" required>
                     <i class='bx bx-envelope'></i>
@@ -45,9 +45,9 @@
                     </label>
                     <a href="#">Forgot password?</a>
                 </div>
-                <button type="submit" class="btn" id = "btn_signin">Login</button>
+                <button type="button" class="btn" id = "btn_signin">Login</button>
                 <p class="toggle-link" onclick="showForm('registration-form')">Don't have an account? Register</p>
-            </form>
+           
         </div>
 
         <!-- Registration Form -->
@@ -78,6 +78,7 @@
     </div>
 
     <div class="sample_json"></div>
+    <input type = "hidden" id = "firebase_uid"/>
     
 
     <!-- Firebase Auth and Realtime Database Javascript Config [START] -->
@@ -99,7 +100,10 @@
     // Import the functions you need from the SDKs you need
     
 
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.13.0/firebase-app.js";
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.13.0/firebase-app.js";
+          
+   
+
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -121,14 +125,16 @@
 
         const app_firebase = initializeApp(firebaseConfig);
         const auth = getAuth();
-    
-        
+   
 
-        function signin_firebase(email,password){
+   
+   
+
+        function signin_firebase(auth, email,password){
 
             signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
 
-                const user = userCredential.user;
+            
 
             
                 window.location.href = "pages/dashboard.php"
@@ -162,7 +168,8 @@
             var email = document.getElementById('email_signin').value;
             var password = document.getElementById('password_signin').value;
 
-            signin_firebase(email,password);
+
+            signin_firebase(auth, email,password);
 
         });     
 
@@ -183,7 +190,9 @@
 
             createUserWithEmailAndPassword(auth, email, password).then((userCredential)=>{
 
-
+                var user = auth.currentUser;
+          
+                document.getElementById('firebase_uid').value = user.uid;            
 
             }).catch((error)=>{
                 $('.login_note').html('Creating new account failed '+error);
@@ -245,81 +254,122 @@
                         resolve(myArray);
                     });
                 })
-            }
-
-      
+            }   
           
+            function add_admin(username,email,password,firebase_uid){
 
-            function add_admin(username,email,password){
-
-
+                let cnt_exist = 0;
                 
                 fetchData().then((retrieveArray)=>{
                     
-                  
-                    let cnt_exist = 0;
+             
 
                     retrieveArray.forEach(function(value,ndx){
 
-                    let id = Object.keys(value);
-                    let data = JSON.stringify(value);
+                        let id = Object.keys(value);
+                        let data = JSON.stringify(value);
+                        let parsedData = JSON.parse(data);
                     
-                    alert(data[""+id+""].username);
-                    
+                
+                    for(const key in parsedData){
+
+                            if(parsedData[key].email_address === email){
+
+                                cnt_exist += 1;
+
+                            }
+
+                        }
+                
+                        //cnt_exist += 1;
+                
 
                     });
 
+
                  
 
-                    if(cnt_exist > 0){
+                });
 
-                        alert('Account Already Exist');
+                if(cnt_exist > 0){
+
+                    alert('Account Already Exist');
 
                     }else{
 
-                                
-                        // const userId = db.ref("/users_admin").push().getKey();
-                        // const userRef = db.ref("/users_admin/"+userId);
+                            
+                    const userId = db.ref("/users_admin").push().getKey();
+                    const userRef = db.ref("/users_admin/"+firebase_uid);
 
-                        // userRef.set({
-                        //     username: username,
-                        //     user_id:userId,
-                        //     firstname:"",
-                        //     lastname:"",
-                        //     middlename:"",
-                        //     extname:"",
-                        //     mobile_no:"",
-                        //     address:"",
-                        //     email_address:email,
-                        //     date_time_registered:""
-                        // });
+                    userRef.set({
+                        username: username,
+                        user_id: firebase_uid,                          
+                        firstname:"",
+                        lastname:"",
+                        middlename:"",
+                        extname:"",
+                        mobile_no:"",
+                        address:"",
+                        email_address:email,
+                        date_time_registered:""
+                    });
 
 
-                        
-                        // alert('Successfully Registered as Administrator!');
-                        // window.location.href = '';
 
-                    }
+                    alert('Successfully Registered as Administrator!');
+                    window.location.href = '';
 
-                });
+                }
          
 
-
-
-            }
+            } // add_admin
 
             var btn_signup = document.getElementById('btn_signup');
+
+
+            function observeHiddenInput(inputId, callback){
+
+                const hiddenInput = document.getElementById(inputId);
+
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if(mutation.type === 'attributes' && mutation.attributeName === 'value'){
+                            const newValue = hiddenInput.value;
+                            callback(newValue);
+                        }
+                    });
+                });
+
+                observer.observe(hiddenInput,{
+                    attributes: true,
+                    attributeFilter: ['value']
+                });
+
+                return observer;
+
+            } // observeHiddenInput
+
+            const observer = observeHiddenInput('firebase_uid',(newValue)=>{
+
+                const username = document.getElementById('username_register').value;
+                const email = document.getElementById('email_register').value;
+                const password = document.getElementById('password_register').value;
+
+                add_admin(username, email, password, newValue);
+        
+            });
             
 
-            btn_signup.addEventListener('click',(e)=>{
+            // btn_signup.addEventListener('click',(e)=>{
 
-                var username = document.getElementById('username_register').value;
-                var email = document.getElementById('email_register').value;
-                var password = document.getElementById('password_register').value;
+            //     var username = document.getElementById('username_register').value;
+            //     var email = document.getElementById('email_register').value;
+            //     var password = document.getElementById('password_register').value;
+            //     var firebase_uid = document.getElementById('firebase_uid').value;
 
-                add_admin(username,email,password);
+            //     //add_admin(username,email,password,firebase_uid);
 
-            });
+            // });
 
     
     </script>
@@ -336,21 +386,7 @@
             document.getElementById(formId).classList.add('active');
         }
 
-        function login(event) {
-            event.preventDefault(); // Prevent form submission
-
-            const correctUsername = "jay";
-            const correctPassword = "123456";
-
-            const typedUsername = document.getElementById('username').value;
-            const typedPassword = document.getElementById('password').value;
-
-            if (typedUsername === correctUsername && typedPassword === correctPassword) {
-                alert("Login Successful");
-            } else {
-                alert("Invalid Username or Password");
-            }
-        }
+     
 
         // Toggle password visibility
         document.getElementById("eyeicon").onclick = function() {

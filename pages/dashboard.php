@@ -2,13 +2,15 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<?php include('variables.php'); ?>
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
   <link rel="icon" type="image/png" href="../assets/img/herbalplantlogo.png">
   <title>
-    Automated Watering System | Admin
+    <?php echo $system_name; ?>
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -259,7 +261,7 @@
             </li>
 
             <li class="nav-item pe-2 d-flex align-items-center">
-              <a href = "" id = "signout" class="nav-link text-body p-0" aria-expanded="false">
+              <a href = "" data-toggle = "modal" data-target = "#logout-modal" class="nav-link text-body p-0" aria-expanded="false">
                 Logout
               </a>            
             </li>
@@ -268,8 +270,22 @@
         </div>
       </div>
     </nav>
+
+  <?php include('modals.php'); ?>
+
     <!-- End Navbar -->
     <div class="container-fluid py-4">
+
+
+      <div class="row">
+        <div class="col-xl-12">
+          <h4 class = "p-4 alert alert-success text-white">
+            <input type = "hidden" id = "firebase_uid"/>
+            Welcome Admin <span class = "font-weight-bold" id = "admin_fullname"></span> <small>(<span id = "admin_email"></span>)</small>
+          </h4>
+        </div>
+      </div>
+
       <div class="row">
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card">
@@ -849,12 +865,46 @@
     var user_id = '';
 
     const user = auth.currentUser;
+  
+    function signout(){
 
-   
+      const auth = getAuth();
+
+      signOut(auth).then(() =>{
+
+        window.location.href = '../index.php';
+
+      }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        alert(errorMessage);
+      });
+
+    } // signout()
+
+    function displayUserInfo(){
+
+      const user = auth.currentUser;
+
+      if (user !== null) {
+
+        var firebaseUID = user.uid;
+
+        document.getElementById('firebase_uid').value = firebaseUID;
+
+    
+      }
+
+    } // displayUserInfo
+
+
 
       onAuthStateChanged(auth, (user) => {
     
         user ? user_id = user.uid : signout();
+        
+        displayUserInfo();
+     
 
        });
 
@@ -864,25 +914,11 @@
 
     logout.addEventListener('click',(e) => {
 
-      signout_user();
+      signout();
 
     }); // logout event
 
-    function signout_user(){
-
-      const auth = getAuth();
-
-      signOut(auth).then(() =>{
-        
-        window.location.href = '../index.php';
-        
-      }).catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        alert(errorMessage);
-      });    
-
-    } // signout_user
+ 
     
 
 </script>
@@ -927,12 +963,49 @@
           //const analytics = getAnalytics(app);
 
           const app = firebase.initializeApp(firebaseConfigApp);
-   
-      
-
           const db = firebase.database();
        
-                             
+          var users_array = [];
+          
+          function get_users(){
+
+            db.ref("users_admin").once('value').then(function(snapshot){
+
+              var firebaseUID = snapshot.key;
+
+              snapshot.forEach(function(childSnapshot) {
+
+                var childData = childSnapshot.val();
+
+                users_array.push(childData);
+
+              });
+
+              setUserInfo();
+
+            });
+
+          }
+
+          get_users();
+
+          function setUserInfo(){
+
+            var uid_firebase = document.getElementById('firebase_uid').value;
+
+          
+            users_array.forEach((user)=>{
+
+              if(user.user_id == uid_firebase){
+
+                document.getElementById('admin_fullname').innerHTML = user.username;
+                document.getElementById('admin_email').innerHTML = user.email_address;
+
+              }
+
+            });
+
+          }
 
 
           function add_admin(username,email,password){

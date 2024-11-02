@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<?php include('variables.php'); ?>
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -24,10 +26,13 @@
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
+
+<?php include('modals.php'); ?>
+
   <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 " id="sidenav-main" data-color = "success">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-      <a class="navbar-brand m-0" href=" https://demos.creative-tim.com/soft-ui-dashboard/pages/dashboard.html " target="_blank">
+      <a class="navbar-brand m-0" href="dashboard.php">
         <img src="../assets/img/automated_watering_system_01_logo.png" class="navbar-brand-img h-200" alt="main_logo">
         <span class="ms-1 font-weight-bold">MALtech</span>
       </a>
@@ -84,7 +89,7 @@
           <a class="nav-link  active" href="../pages/profile.php">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 46 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                <title>customer-support</title>
+                <title>Profile</title>
                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                   <g transform="translate(-1717.000000, -291.000000)" fill="#FFFFFF" fill-rule="nonzero">
                     <g transform="translate(1716.000000, 291.000000)">
@@ -190,8 +195,10 @@
                 </li>
 
                 <li class="nav-item">
-                  <button id = "signout" class = "btn btn-round btn-outline-dark"><i class = "ni ni-bold-right text-dark"></i> Logout</button>
+                  <button data-toggle = "modal" data-target = "#logout-modal" class = "btn btn-round btn-outline-dark"><i class = "ni ni-bold-right text-dark"></i> Logout</button>
                 </li>
+
+         
 
               </ul>
             </div>
@@ -497,37 +504,41 @@
 
     const user = auth.currentUser;
 
-    onAuthStateChanged(auth, (user) => {
-    
-      user ? user_id = user.uid : signout();
 
-    });
-  
-
-    // auth.emailVerified ? user_id = user.uid : signout_user();
-
-
-    logout.addEventListener('click',(e) => {
-
-      signout_user();
-
-    }); // logout event
-
-    function signout_user(){
+    function signout(){
 
       const auth = getAuth();
 
       signOut(auth).then(() =>{
-        
+
         window.location.href = '../index.php';
-        
+
       }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         alert(errorMessage);
-      });    
+      });
 
-    } // signout_user
+    } // signout()
+
+  
+   
+    onAuthStateChanged(auth, (user) => {
+    
+      user ? user_id = user.uid : signout();      
+
+    });
+  
+
+    
+
+
+    logout.addEventListener('click',(e) => {
+
+      signout();
+
+    }); // logout event
+
     
 
 </script>
